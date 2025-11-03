@@ -7,13 +7,13 @@ import util.Metrics;
 import java.util.*;
 
 public class DAGShortestPath {
-    private Metrics metrics;
+    private final Metrics metrics;
 
     public DAGShortestPath(Metrics metrics) {
         this.metrics = metrics;
     }
 
-    public Map<String, Double> shortestPath(Map<String, List<Edge>> adj, String src) {
+    public Map<String, Double> shortestPath(Map<String, List<Edge>> adj, String src, Map<String, String> parent) {
         Map<String, List<String>> simple = new HashMap<>();
         for (var e : adj.entrySet()) {
             List<String> vs = new ArrayList<>();
@@ -34,13 +34,14 @@ public class DAGShortestPath {
                 double newDist = dist.get(u) + e.getWeight();
                 if (newDist < dist.get(e.getTo())) {
                     dist.put(e.getTo(), newDist);
+                    parent.put(e.getTo(), u);
                 }
             }
         }
         return dist;
     }
 
-    public Map<String, Double> longestPath(Map<String, List<Edge>> adj, String src) {
+    public Map<String, Double> longestPath(Map<String, List<Edge>> adj, String src, Map<String, String> parent) {
         Map<String, List<String>> simple = new HashMap<>();
         for (var e : adj.entrySet()) {
             List<String> vs = new ArrayList<>();
@@ -61,10 +62,10 @@ public class DAGShortestPath {
                 double newDist = dist.get(u) + e.getWeight();
                 if (newDist > dist.get(e.getTo())) {
                     dist.put(e.getTo(), newDist);
+                    parent.put(e.getTo(), u);
                 }
             }
         }
-
         return dist;
     }
 
@@ -74,5 +75,15 @@ public class DAGShortestPath {
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .orElse(null);
+    }
+
+    public List<String> reconstructPath(Map<String, String> parent, String end) {
+        LinkedList<String> path = new LinkedList<>();
+        String cur = end;
+        while (cur != null) {
+            path.addFirst(cur);
+            cur = parent.get(cur);
+        }
+        return path;
     }
 }

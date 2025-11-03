@@ -1,0 +1,10 @@
+dataset,totalTimeMs,elapsedMs,dfsVisits,dfsEdges,kahnPushes,kahnPops,relaxations
+large_1.json,28.495,20,30,121,3,3,0
+large_2.json,1.700,0,38,158,3,3,0
+large_3.json,1.976,0,38,157,3,3,0
+medium_1.json,1.119,0,14,39,3,3,0
+medium_2.json,0.897,0,11,29,3,3,0
+medium_3.json,1.104,0,17,51,3,3,0
+small_1.json,0.628,0,6,10,3,3,0
+small_2.json,0.655,0,8,13,3,3,0
+small_3.json,2.194,1,8,14,15,15,16

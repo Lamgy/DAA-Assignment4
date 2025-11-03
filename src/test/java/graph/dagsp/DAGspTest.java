@@ -24,8 +24,11 @@ public class DAGspTest {
         Graph g = new Graph(1, nodes, edges, true, "0");
         DAGShortestPath sp = new DAGShortestPath(new Metrics());
 
-        Map<String, Double> shortest = sp.shortestPath(g.getAdjacencyList(), "0");
-        Map<String, Double> longest = sp.longestPath(g.getAdjacencyList(), "0");
+        Map<String, String> parent1 = new HashMap<>();
+        Map<String, Double> shortest = sp.shortestPath(g.getAdjacencyList(), "0", parent1);
+
+        Map<String, String> parent2 = new HashMap<>();
+        Map<String, Double> longest = sp.longestPath(g.getAdjacencyList(), "0", parent2);
 
         assertEquals(0.0, shortest.get("0"));
         assertEquals(1.0, shortest.get("1"));
@@ -47,7 +50,9 @@ public class DAGspTest {
 
         Graph g = new Graph(2, nodes, edges, true, "A");
         DAGShortestPath sp = new DAGShortestPath(new Metrics());
-        Map<String, Double> dist = sp.shortestPath(g.getAdjacencyList(), "A");
+
+        Map<String, String> parent = new HashMap<>();
+        Map<String, Double> dist = sp.shortestPath(g.getAdjacencyList(), "A", parent);
 
         assertEquals(Double.POSITIVE_INFINITY, dist.get("C"), "Unreachable node should remain INF");
     }
@@ -59,7 +64,9 @@ public class DAGspTest {
         Graph g = new Graph(3, nodes, edges, true, "X");
 
         DAGShortestPath sp = new DAGShortestPath(new Metrics());
-        Map<String, Double> dist = sp.shortestPath(g.getAdjacencyList(), "X");
+
+        Map<String, String> parent = new HashMap<>();
+        Map<String, Double> dist = sp.shortestPath(g.getAdjacencyList(), "X", parent);
 
         assertEquals(0.0, dist.get("X"), "Source should have distance 0");
     }
@@ -74,7 +81,9 @@ public class DAGspTest {
 
         Graph g = new Graph(4, nodes, edges, true, "A");
         DAGShortestPath sp = new DAGShortestPath(new Metrics());
-        Map<String, Double> dist = sp.shortestPath(g.getAdjacencyList(), "A");
+
+        Map<String, String> parent = new HashMap<>();
+        Map<String, Double> dist = sp.shortestPath(g.getAdjacencyList(), "A", parent);
 
         assertEquals(-2.0, dist.get("B"));
         assertEquals(1.0, dist.get("C"));

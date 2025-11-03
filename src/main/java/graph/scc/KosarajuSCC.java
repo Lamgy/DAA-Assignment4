@@ -4,7 +4,7 @@ import util.Metrics;
 import java.util.*;
 
 public class KosarajuSCC {
-    private Metrics metrics;
+    private final Metrics metrics;
 
     public KosarajuSCC(Metrics metrics) {
         this.metrics = metrics;
@@ -21,7 +21,6 @@ public class KosarajuSCC {
         }
 
         Map<String, List<String>> transposed = transpose(adj);
-
         visited.clear();
         List<List<String>> components = new ArrayList<>();
 
@@ -36,6 +35,28 @@ public class KosarajuSCC {
 
         metrics.stopTimer();
         return components;
+    }
+
+    public Map<String, List<String>> buildCondensation(Map<String, List<String>> adj, List<List<String>> comps) {
+        Map<String, String> nodeToComp = new HashMap<>();
+        for (int i = 0; i < comps.size(); i++)
+            for (String v : comps.get(i))
+                nodeToComp.put(v, "C" + i);
+
+        Map<String, List<String>> dag = new HashMap<>();
+        for (int i = 0; i < comps.size(); i++) dag.put("C" + i, new ArrayList<>());
+
+        for (var e : adj.entrySet()) {
+            String u = e.getKey();
+            for (String v : e.getValue()) {
+                String cu = nodeToComp.get(u);
+                String cv = nodeToComp.get(v);
+                if (!cu.equals(cv) && !dag.get(cu).contains(cv)) {
+                    dag.get(cu).add(cv);
+                }
+            }
+        }
+        return dag;
     }
 
     private void dfs1(String u, Map<String, List<String>> adj, Set<String> visited, Deque<String> stack) {
@@ -60,14 +81,11 @@ public class KosarajuSCC {
 
     private Map<String, List<String>> transpose(Map<String, List<String>> adj) {
         Map<String, List<String>> rev = new HashMap<>();
-        for (String u : adj.keySet())
-            rev.put(u, new ArrayList<>());
-
-        for (var entry : adj.entrySet()) {
-            String u = entry.getKey();
-            for (String v : entry.getValue()) {
+        for (String u : adj.keySet()) rev.put(u, new ArrayList<>());
+        for (var e : adj.entrySet()) {
+            String u = e.getKey();
+            for (String v : e.getValue())
                 rev.get(v).add(u);
-            }
         }
         return rev;
     }
